@@ -15,14 +15,14 @@ def _split_data(df: pd.DataFrame) -> Tuple[Pool, Pool]:
     Returns:
         Tuple[Pool, Pool]: A tuple of two `Pool` objects, one for training data and one for validation data.
     """        
-    X = df.drop(columns=["returns"])
+    x = df.drop(columns=["returns"])
     y = df["returns"]
 
-    X_train, y_train = X[:-150_000], y.iloc[:-150_000]
-    X_val,   y_val   = X[-100_000:], y.iloc[-100_000:]
+    x_train, y_train = x[:-150_000], y.iloc[:-150_000]
+    x_val,   y_val   = x[-100_000:], y.iloc[-100_000:]
 
-    train_pool = Pool(X_train, y_train)
-    val_pool = Pool(X_val, y_val)
+    train_pool = Pool(x_train, y_train)
+    val_pool = Pool(x_val, y_val)
 
     return train_pool, val_pool
 
@@ -39,7 +39,7 @@ def fit(df: pd.DataFrame) -> catboost.core.CatBoostRegressor:
     train_pool, val_pool = _split_data(df)
     
     model = CatBoostRegressor(
-        iterations=2000, 
+        iterations=1500, 
         learning_rate=0.07,
         random_seed=42, 
         eval_metric="R2"
@@ -48,7 +48,7 @@ def fit(df: pd.DataFrame) -> catboost.core.CatBoostRegressor:
         train_pool, 
         eval_set=val_pool, 
         early_stopping_rounds=100, 
-        verbose="Silent"
+        verbose=100
     )
     
     return model
@@ -86,7 +86,3 @@ def forecast(df: pd.DataFrame, model: catboost.core.CatBoostRegressor) -> np.nda
     y_preds = model.predict(df)
     
     return y_preds
-
- 
-
-  

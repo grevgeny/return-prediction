@@ -6,10 +6,6 @@ This repository contains code for a machine learning model that predicts mid ret
 ```
 README.md
 setup.py
-data/
-    train/
-        data.h5
-        result.h5
 src/
     data_processing.py
     features.py
@@ -18,19 +14,16 @@ src/
     utils.py
 models/
     catboost_model
-results/
 ```
 The repository contains the following directories:
 
-- `data/train`: Directory with training data, data.h5 and result.h5.
 - `src/`: Directory with source code.
 - `models/`: Directory with saved model.
-- `results/`: Directory with results of forecasting.
 
 ## Installation
 In this project Python 3.10.6 has been used.
 
-```bash
+```
 git clone https://github.com/grevgeny/return-prediction.git;
 pip install . --quiet
 ```

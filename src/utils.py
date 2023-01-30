@@ -4,12 +4,11 @@ import h5py
 import pandas as pd
 
 
-def read_data_h5_file(path: str, depth: int) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def read_data_h5_file(path: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Reads data from data HDF5 file and returns the order book and trades data.
 
     Args:
         path (str): The path to the HDF5 file.
-        depth (int): The number of levels to include in the order book data.
 
     Returns:
         Tuple[pd.DataFrame, pd.DataFrame]: A tuple of two pandas DataFrames, one for the order book data and one for the trades data.
@@ -20,14 +19,12 @@ def read_data_h5_file(path: str, depth: int) -> Tuple[pd.DataFrame, pd.DataFrame
     with h5py.File(path, "r") as f:
         for group in ["OB", "Trades"]:
             for name, data in f[group].items():
-                if name in ["TS", "Amount", "Price"]:
-                    data_array = data[()]
-                    data_df = pd.DataFrame(data_array, columns=[name])
+                if name in ["TS", "Amount"]:
+                    data_df = pd.DataFrame(data[()], columns=[name])
                 else:
-                    data_array = data[:, :depth]
                     data_df = pd.DataFrame(
-                        data_array,
-                        columns=[f"{name.lower()}_{i}" for i in range(1, depth+1)],
+                        data[:, :5],
+                        columns=[f"{name.lower()}_{i}" for i in range(1, 6)],
                         dtype="float32"
                     )
                 
@@ -52,7 +49,13 @@ def read_result_h5_file(path: str) -> pd.DataFrame:
         pd.DataFrame: A pandas DataFrame containing the result data from the file.
     """
     with h5py.File(path, "r") as f:
-        data_array = f["Return/Res"][()]
-        returns_df = pd.DataFrame(data_array, columns=["returns"], dtype="float32")
+        returns_df = pd.DataFrame(f["Return/Res"][()], columns=["returns"], dtype="float32")
     
     return returns_df
+
+
+def save_results(TS: pd.Series, y_pred: pd.Series) -> None:
+    with h5py.File("./forecast.h5", "w") as f:
+        group = f.create_group("Return")
+        group.create_dataset(name='Res', data=y_pred.values)
+        group.create_dataset(name='TS', data=TS)

@@ -28,7 +28,7 @@ def create_trade_features(OB_df: pd.DataFrame, trades_df: pd.DataFrame):
 
     df = pd.concat([OB_df, last_amount, last_price_diff], axis=1).drop(columns="TS")
 
-    return df
+    return df, ob_ts
 
 def create_time_insensitive(df: pd.DataFrame) -> pd.DataFrame:
     """Creates time-insensitive features based on order book data.

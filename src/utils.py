@@ -62,7 +62,7 @@ def save_results(y_preds: np.ndarray, TS: np.ndarray) -> None:
         y_preds (np.ndarray): Array with predicted returns.
         TS (np.ndarray): Array with time index.
     """
-    with h5py.File(".results/forecast.h5", "w") as f:
+    with h5py.File("./results/forecast.h5", "w") as f:
         group = f.create_group("Return")
         group.create_dataset(name='TS', data=TS)
         group.create_dataset(name='Res', data=y_preds)

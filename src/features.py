@@ -18,8 +18,8 @@ def create_trade_features(
         Tuple[pd.DataFrame, np.ndarray]: Tuple with DataFrame containing order book data with additional trade features
             and array with order book ts data.
     """
-    trades_ts = trades_df["ts"]
-    ob_ts = ob_df["ts"]
+    trades_ts = trades_df["TS"]
+    ob_ts = ob_df["TS"]
     last_trade_idx = trades_ts.searchsorted(ob_ts, side='right') - 1
     last_trade_idx[0] = 0
 
@@ -32,7 +32,7 @@ def create_trade_features(
     )
     last_amount = last_trade["Amount"].rename("last_amount")
 
-    df = pd.concat([ob_df, last_amount, last_price_diff], axis=1).drop(columns="ts")
+    df = pd.concat([ob_df, last_amount, last_price_diff], axis=1).drop(columns="TS")
     ts = ob_ts.to_numpy()
 
     return df, ts

@@ -20,7 +20,7 @@ def read_data_h5_file(path: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
     with h5py.File(path, "r") as f:
         for group in ["OB", "Trades"]:
             for name, data in f[group].items():
-                if name in ["TS", "Amount"]:
+                if name in ["TS", "Amount", "Price"]:
                     data_df = pd.DataFrame(data[()], columns=[name])
                 else:
                     data_df = pd.DataFrame(

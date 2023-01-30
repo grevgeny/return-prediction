@@ -1,8 +1,8 @@
 from typing import Tuple
 
 import h5py
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 
 def read_data_h5_file(path: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
@@ -47,22 +47,22 @@ def read_result_h5_file(path: str) -> pd.DataFrame:
         path (str): The path to the HDF5 file.
     
     Returns:
-        pd.DataFrame: A pandas DataFrame containing the result data from the file.
+        np.ndarray: A numpy array containing the result data from the file.
     """
     with h5py.File(path, "r") as f:
-        returns_df = pd.DataFrame(f["Return/Res"][()], columns=["returns"], dtype="float32")
+        returns = f["Return/Res"][()]
     
-    return returns_df
+    return returns
 
 
 def save_results(y_preds: np.ndarray, TS: np.ndarray) -> None:
     """Saves forecasting results to an HDF5 file.
 
     Args:
-        TS (np.ndarray): A time series of actual returns.
-        y_preds (p.ndarray): A time series of predicted returns.
+        y_preds (np.ndarray): Array with predicted returns.
+        TS (np.ndarray): Array with time index.
     """
-    with h5py.File("./forecast.h5", "w") as f:
+    with h5py.File(".results/forecast.h5", "w") as f:
         group = f.create_group("Return")
         group.create_dataset(name='TS', data=TS)
         group.create_dataset(name='Res', data=y_preds)

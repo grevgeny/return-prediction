@@ -2,23 +2,23 @@ import argparse
 
 from loguru import logger
 
-from data_preprocessing import load_data, process_data
-from modelling import fit, forecast, load_model, save_model
-from utils import save_results
+from .data_preprocessing import load_data, process_data
+from .modelling import fit, forecast, load_model, save_model
+from .utils import save_results
 
 
 def main():
     parser = argparse.ArgumentParser(description="Forecast mid return for cryptoasset")
     parser.add_argument(
-        "--mode", 
-        type=str, 
-        choices=["fit", "forecast"], 
+        "--mode",
+        type=str,
+        choices=["fit", "forecast"],
         help="Mode of operation"
     )
     parser.add_argument(
-        "--data_path", 
-        type=str, 
-        help="(fit) Path to training data directory with data.h5 and result.h5 or (forecast) path to data.h5"
+        "--data_path",
+        type=str,
+        help="Path to training data directory with data.h5 and result.h5 (fit) or path to data.h5 (forecast)"
     )
     args = parser.parse_args()
 
@@ -27,12 +27,12 @@ def main():
 
     # Load data
     logger.info("Loading data...")
-    OB_df, trades_df = load_data(data_path, mode)
+    ob_df, trades_df = load_data(data_path, mode)
     logger.info("Data was loaded successfully\n")
 
     # Process data
     logger.info("Processing data...")
-    df, TS = process_data(OB_df, trades_df)
+    df, ts = process_data(ob_df, trades_df)
     del trades_df
     logger.info("Data processed successfully\n")
 
@@ -53,7 +53,7 @@ def main():
         logger.info("Loading model...")
         model = load_model()
         logger.info("Model loaded successfully\n")
-        
+
         # Forecast with fitted model
         logger.info("Forecasting...")
         y_preds = forecast(df, model)
@@ -61,8 +61,8 @@ def main():
 
         # Save forecast
         logger.info("Saving results...")
-        save_results(y_preds, TS)
-        logger.info(f"Results saved in ./forecast.h5\n")
+        save_results(y_preds, ts)
+        logger.info("Results saved in ./results/forecast.h5\n")
 
 
 if __name__ == "__main__":

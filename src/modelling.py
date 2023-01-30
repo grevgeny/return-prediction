@@ -1,21 +1,22 @@
-from pathlib import Path
 from typing import Tuple
 
 import catboost
+import numpy as np
 import pandas as pd
 from catboost import CatBoostRegressor, Pool
 
 
-def _split_data(X: pd.DataFrame, y: pd.Series) -> Tuple[Pool, Pool]:
-    """Split the given data into training and validation sets.
+def _split_data(df: pd.DataFrame) -> Tuple[Pool, Pool]:
+    """Splits the given data into training and validation sets.
 
     Args:
-        X (pd.DataFrame): A DataFrame containing feature data.
-        y (pd.Series): A Series containing target data.
+        df (pd.DataFrame): DataFrame containing features and target data.
 
     Returns:
         Tuple[Pool, Pool]: A tuple of two `Pool` objects, one for training data and one for validation data.
-    """
+    """        
+    X = df.drop(columns=["returns"])
+    y = df["returns"]
 
     X_train, y_train = X[:-150_000], y.iloc[:-150_000]
     X_val,   y_val   = X[-100_000:], y.iloc[-100_000:]
@@ -25,18 +26,17 @@ def _split_data(X: pd.DataFrame, y: pd.Series) -> Tuple[Pool, Pool]:
 
     return train_pool, val_pool
 
-def fit(X: pd.DataFrame, y: pd.Series) -> catboost.core.CatBoostRegressor:
-    """Fit a CatBoostRegressor model to training data.
+def fit(df: pd.DataFrame) -> catboost.core.CatBoostRegressor:
+    """Fits a CatBoostRegressor model to training data.
 
     Args:
-        X (pd.DataFrame): The input features data.
-        y (pd.Series): The target data.
+        df (pd.DataFrame): DataFrame containing features and target data.
 
     Returns:
         catboost.core.CatBoostRegressor: Fitted CatBoostRegressor model.
 
     """
-    train_pool, val_pool = _split_data(X, y)
+    train_pool, val_pool = _split_data(df)
     
     model = CatBoostRegressor(
         iterations=2000, 
@@ -54,29 +54,39 @@ def fit(X: pd.DataFrame, y: pd.Series) -> catboost.core.CatBoostRegressor:
     return model
 
 def save_model(model: catboost.core.CatBoostRegressor) -> None:
-    """Saves the model as a file.
+    """Saves the model to disk.
 
     Args:
-    model (catboost.core.CatBoostRegressor): The CatBoostRegressor object to be saved.
-
-    Returns:
-    None: This function does not return anything.
+        model (catboost.core.CatBoostRegressor): CatBoostRegressor object to be saved.
     """
     model.save_model("models/catboost_model")
 
 def load_model() -> catboost.core.CatBoostRegressor:
-    """Load the saved model from disk.
+    """Loads saved model from disk.
 
     Returns:
-    catboost.core.CatBoostRegressor: The trained and saved CatBoostRegressor model.
+        catboost.core.CatBoostRegressor: Trained and saved CatBoostRegressor model.
     """
     model = CatBoostRegressor()
     model.load_model("models/catboost_model")
     
     return model
 
-def forecast(df: pd.DataFrame, model: catboost.core.CatBoostRegressor) -> None:
-    ...
+def forecast(df: pd.DataFrame, model: catboost.core.CatBoostRegressor) -> np.ndarray:
+    """Forecasts using trained CatBoostRegressor model.
+
+    Args:
+        df: pd.DataFrame - A DataFrame containing the feature data to make predictions on.
+    model: catboost.core.CatBoostRegressor - A trained CatBoostRegressor model.
+
+    Returns:
+    np.ndarray - An array of predictions made by the model.
+    """
+    
+    y_preds = model.predict(df)
+    
+    return y_preds
+
  
 
   

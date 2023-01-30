@@ -1,5 +1,6 @@
 from typing import Tuple
 
+import numpy as np
 import pandas as pd
 
 from features import (create_time_insensitive, create_time_sensitive,
@@ -27,7 +28,7 @@ def load_data(source: str, mode: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
 
     return OB_df, trades_df
 
-def process_data(OB_df: pd.DataFrame, trades_df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Series]:
+def process_data(OB_df: pd.DataFrame, trades_df: pd.DataFrame) -> Tuple[pd.DataFrame, np.ndarray]:
     """Processes and creates features from order book and trades data.
 
     Args:
@@ -35,7 +36,8 @@ def process_data(OB_df: pd.DataFrame, trades_df: pd.DataFrame) -> Tuple[pd.DataF
         trades_df (pd.DataFrame): DataFrame containing trades data.
 
     Returns:
-        pd.DataFrame: A DataFrame containing processed and created features from input order book and trades data.
+        Tuple[pd.DataFrame, np.ndarray]: A tuple of DataFrame containing processed and created features
+            and array with TS data.
 
     """
     # Create fetures based on given trades occured

@@ -1,8 +1,10 @@
 import numpy as np
 import pandas as pd
 
+from typing import Tuple
 
-def create_trade_features(OB_df: pd.DataFrame, trades_df: pd.DataFrame):
+
+def create_trade_features(OB_df: pd.DataFrame, trades_df: pd.DataFrame) -> Tuple[pd.DataFrame, np.ndarray]:
     """Creates trade features based on order book and trades data.
 
     Args:
@@ -10,7 +12,8 @@ def create_trade_features(OB_df: pd.DataFrame, trades_df: pd.DataFrame):
         trades_df (pd.DataFrame): Trades data.
 
     Returns:
-        pd.DataFrame: Pandas DataFrame containing order book data with additional trade features.
+        Tuple[pd.DataFrame, np.ndarray]: Tuple with DataFrame containing order book data with additional trade features
+            and array with order book TS data.
     """
     trades_ts = trades_df["TS"]
     ob_ts = OB_df["TS"]
@@ -27,8 +30,9 @@ def create_trade_features(OB_df: pd.DataFrame, trades_df: pd.DataFrame):
     last_amount = last_trade["Amount"].rename("last_amount")
 
     df = pd.concat([OB_df, last_amount, last_price_diff], axis=1).drop(columns="TS")
+    TS = ob_ts.to_numpy()
 
-    return df, ob_ts
+    return df, TS
 
 def create_time_insensitive(df: pd.DataFrame) -> pd.DataFrame:
     """Creates time-insensitive features based on order book data.

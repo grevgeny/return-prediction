@@ -12,9 +12,7 @@ build/
 .vscode
 
 # HGDF5 local files
-*.h5
+data/
 
 # Catboost files
 catboost_info/
-
-

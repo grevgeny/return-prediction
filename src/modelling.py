@@ -59,7 +59,7 @@ def save_model(model: catboost.core.CatBoostRegressor) -> None:
     Args:
         model (catboost.core.CatBoostRegressor): CatBoostRegressor object to be saved.
     """
-    model.save_model("models/catboost_model")
+    model.save_model("return-prediction/models/catboost_model")
 
 def load_model() -> catboost.core.CatBoostRegressor:
     """Loads saved model from disk.
@@ -68,7 +68,7 @@ def load_model() -> catboost.core.CatBoostRegressor:
         catboost.core.CatBoostRegressor: Trained and saved CatBoostRegressor model.
     """
     model = CatBoostRegressor()
-    model.load_model("models/catboost_model")
+    model.load_model("./return-prediction/models/catboost_model")
     
     return model
 

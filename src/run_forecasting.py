@@ -45,7 +45,7 @@ def main():
         # Save model
         logger.info("Saving model...")
         save_model(model)
-        logger.info("Model saved to ./models/catboost_model\n")
+        logger.info("Model saved to ./return-prediction/models/catboost_model\n")
 
     elif args.mode == "forecast":
 
@@ -62,7 +62,7 @@ def main():
         # Save forecast
         logger.info("Saving results...")
         save_results(y_preds, ts)
-        logger.info("Results saved in ./results/forecast.h5\n")
+        logger.info("Results saved in ./forecast.h5\n")
 
 
 if __name__ == "__main__":
